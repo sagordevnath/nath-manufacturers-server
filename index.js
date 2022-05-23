@@ -25,6 +25,7 @@ function verifyJWT(req, res, next) {
         return res.status(403).send({ message: 'Forbidden access' })
       }
       req.decoded = decoded;
+      console.log('decoded', decoded)
       next();
     });
   }
@@ -77,18 +78,26 @@ async function run() {
       return res.send({ success: true, result });
     });
 
-    app.get('/order', async (req, res) => {
+    app.get('/order', verifyJWT, async (req, res) => {
       const userEmail = req.query.userEmail;
-      // const decodedEmail = req.decoded.email;
-      // if (userEmail === decodedEmail) {
+      console.log(userEmail);
+      const decodedEmail = req.decoded.email;
+      if (userEmail == decodedEmail) {
         const query = { userEmail: userEmail };
         const order = await orderCollection.find(query).toArray();
         return res.send(order);
-      // }
-      // else {
-      //   return res.status(403).send({ message: 'forbidden access' });
-      // }
+      }
+      else {
+        return res.status(403).send({ message: 'forbidden access' });
+      }
     });
+
+    app.delete('/order/:id', verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await orderCollection.deleteOne(query);
+      res.send(result);
+    })
      
     } finally {
       
