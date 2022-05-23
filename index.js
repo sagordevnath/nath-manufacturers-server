@@ -63,6 +63,32 @@ async function run() {
         const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
         res.send({ result, token});
       });
+
+      app.post('/order', async (req, res) => {
+      const order = req.body;
+      // const query = { treatment: booking.treatment, date: booking.date, patient: booking.patient }
+      // const exists = await orderCollection.findOne(query);
+      // if (exists) {
+      //   return res.send({ success: false, booking: exists })
+      // }
+      const result = await orderCollection.insertOne(order);
+      console.log('sending email');
+      // sendAppointmentEmail(booking);
+      return res.send({ success: true, result });
+    });
+
+    app.get('/order', async (req, res) => {
+      const userEmail = req.query.userEmail;
+      // const decodedEmail = req.decoded.email;
+      // if (userEmail === decodedEmail) {
+        const query = { userEmail: userEmail };
+        const order = await orderCollection.find(query).toArray();
+        return res.send(order);
+      // }
+      // else {
+      //   return res.status(403).send({ message: 'forbidden access' });
+      // }
+    });
      
     } finally {
       
