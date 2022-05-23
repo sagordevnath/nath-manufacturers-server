@@ -37,6 +37,7 @@ async function run() {
       const productCollection = client.db('computer-manufacturers').collection('products');
       const userCollection = client.db('computer-manufacturers').collection('users');      
       const orderCollection = client.db('computer-manufacturers').collection('orders');
+      const reviewCollection = client.db('computer-manufacturers').collection('reviews');
 
       app.get('/product', async(req, res) => {
           const products = await productCollection.find().toArray();
@@ -97,7 +98,18 @@ async function run() {
       const query = {_id: ObjectId(id)};
       const result = await orderCollection.deleteOne(query);
       res.send(result);
-    })
+    });
+
+    app.get('/review', async(req, res) => {
+      const review = await reviewCollection.find().toArray();
+      res.send(review);
+  });
+
+  app.post('/review', async (req, res) => {
+    const review = req.body;    
+    const result = await reviewCollection.insertOne(review);
+    return res.send({ success: true, result });
+  });
      
     } finally {
       
