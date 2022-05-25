@@ -206,13 +206,13 @@ async function run() {
     })
 
     // get all reviews by sort
-    app.get('/review', async(req, res) => {
-      const reviews = await reviewCollection.find().sort({$natural: -1}).toArray();
+    app.get('/customer-review', async(req, res) => {
+      const reviews = await reviewCollection.find().toArray();
       res.send(reviews);
   });
 
   // create new review
-  app.post('/review', async (req, res) => {
+  app.post('/customer-review', async (req, res) => {
     const review = req.body;    
     const result = await reviewCollection.insertOne(review);
     return res.send({ success: true, result });
