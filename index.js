@@ -108,6 +108,13 @@ async function run() {
       const email = req.params.email;
       const user = await userCollection.findOne({ email: email });
       res.send(user);
+    });
+
+    // delete user by email
+    app.delete('/user/:email', verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const result = await userCollection.deleteOne({ email: email });
+      res.send({ success: true, result });
     })
     
     //get admin api
@@ -207,7 +214,7 @@ async function run() {
 
     // get all reviews by sort
     app.get('/customer-review', async(req, res) => {
-      const reviews = await reviewCollection.find().toArray();
+      const reviews = await reviewCollection.find().sort({natural: -1}).toArray();
       res.send(reviews);
   });
 
